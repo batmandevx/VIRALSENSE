@@ -35,7 +35,7 @@ def page(cfg: dict) -> None:
     n_acc = int(comp.accounts.sum()) if comp is not None else None
     kpis([
         {"label": "Posts analysed", "value": n_posts, "fmt": "int", "note": f"{n_acc} influencer accounts" if n_acc else ""},
-        {"label": "Macro-F1 on unseen accounts", "value": sel.macro_f1, "fmt": "num3", "note": f"{sel.model} · chance ≈ 0.33"},
+        {"label": "Macro-F1 on unseen accounts", "value": sel.macro_f1, "fmt": "num3", "note": f"{MODEL_NAMES.get(sel.model, sel.model)} · chance ≈ 0.33"},
         {"label": "Viral recall", "value": sel.recall_Viral, "fmt": "pct", "note": "share of truly Viral posts caught"},
         {"label": "Viral PR-AUC", "value": sel.pr_auc_viral, "fmt": "num3", "note": f"vs {sel.viral_prevalence:.3f} for a random ranking"},
         {"label": "Engagement ranking ρ", "value": None if reg is None else reg.test_spearman.iloc[0], "fmt": "num3",

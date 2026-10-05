@@ -50,3 +50,14 @@ def test_page_renders_with_real_results(module):
     at = AppTest.from_function(_real_page, args=(APP_DIR, module), default_timeout=300)
     at.run()
     assert not at.exception, [e.message for e in at.exception]
+
+
+def test_form_keys_never_reused_as_session_state_keys():
+    """Regression: st.form("ab") + st.session_state["ab"] = ... raises StreamlitWidgetAlreadyInstantiatedError."""
+    import re
+
+    for f in (Path(APP_DIR) / "ui").glob("*.py"):
+        src = f.read_text()
+        forms = set(re.findall(r'st\.form\(\s*"([^"]+)"', src))
+        state = set(re.findall(r'session_state\[\s*"([^"]+)"\s*\]', src)) | set(re.findall(r'session_state\.get\(\s*"([^"]+)"', src))
+        assert not forms & state, f"{f.name}: form key reused in session_state: {forms & state}"

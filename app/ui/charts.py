@@ -239,7 +239,7 @@ def grouped_bars_err(categories: list[str], groups: dict, height: int = 340, yna
 
 
 def lines(x, series: dict, height: int = 340, xname: str = "", yname: str = "", ref: tuple | None = None,
-          area: bool = False, smooth: bool = False, ymax=None) -> None:
+          area: bool = False, smooth: bool = False, ymax=None, ymin=None) -> None:
     """x: shared x values, or dict name -> x values."""
     o = _Opt()
     ss = []
@@ -262,7 +262,7 @@ def lines(x, series: dict, height: int = 340, xname: str = "", yname: str = "", 
         "tooltip": {"trigger": "axis", "valueFormatter": o.js("function(v){return v==null?'':v.toFixed(3)}")},
         "xAxis": _axis(type="value", name=xname, nameLocation="middle", nameGap=24, splitLine={"show": False},
                        min="dataMin", max="dataMax"),
-        "yAxis": _axis(type="value", name=yname, max=ymax),
+        "yAxis": _axis(type="value", name=yname, max=ymax, min=ymin, scale=ymin is not None),
         "dataZoom": [{"type": "inside"}],
         "series": ss,
     }, height)

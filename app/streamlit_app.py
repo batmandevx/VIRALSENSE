@@ -13,11 +13,14 @@ import viralsense  # noqa: E402,F401  (sets OMP_NUM_THREADS before torch/xgboost
 import streamlit as st  # noqa: E402
 
 from ui import analyze, compare, explore, home, insights, jury_page, method  # noqa: E402
-from ui.theme import inject_css  # noqa: E402
+from ui.theme import inject_css, status_card  # noqa: E402
 from viralsense.utils import load_config  # noqa: E402
 
-st.set_page_config(page_title="ViralSense", page_icon="✦", layout="wide")
+ASSETS = Path(__file__).resolve().parent / "assets"
+st.set_page_config(page_title="ViralSense", page_icon=str(ASSETS / "icon.svg"), layout="wide")
 inject_css()
+st.logo(str(ASSETS / "logo.svg"), icon_image=str(ASSETS / "icon.svg"), size="large",
+        link="https://github.com/batmandevx/VIRALSENSE")
 cfg = load_config(os.environ.get("VIRALSENSE_CONFIG"))
 
 pages = {
@@ -36,7 +39,5 @@ nav = st.navigation({
     "Understand": [pages["jury"], pages["explore"], pages["insights"], pages["method"]],
 })
 with st.sidebar:
-    st.markdown("### ✦ ViralSense")
-    st.caption("Pre-publication virality prediction for Instagram posts.")
-    st.caption("Ayush Upadhyay · R Rishita · Avantika Gupta")
+    status_card(cfg)
 nav.run()

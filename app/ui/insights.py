@@ -81,7 +81,8 @@ def overview(cfg):
                 ys[f"{MODEL_NAMES.get(mdl, mdl)} best so far"] = g.macro_f1.cummax().to_numpy()
                 xs[f"{MODEL_NAMES.get(mdl, mdl)} trial"] = g.trial.to_numpy()
                 ys[f"{MODEL_NAMES.get(mdl, mdl)} trial"] = g.macro_f1.to_numpy()
-            charts.lines(xs, ys, height=320, xname="trial", yname="CV macro-F1")
+            lo = float(hist.macro_f1.min())
+            charts.lines(xs, ys, height=320, xname="trial", yname="CV macro-F1", ymin=round(lo - 0.005, 3))
         with t2:
             imps = [x for x in (_csv(cfg, f"tuning_param_importance_{k}.csv") for k in ("xgb", "lgbm")) if x is not None]
             if imps:

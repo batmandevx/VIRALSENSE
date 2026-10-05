@@ -13,7 +13,7 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-CLIP-EE4C2C?logo=pytorch&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.65-FF4B4B?logo=streamlit&logoColor=white)
 ![Ollama](https://img.shields.io/badge/LLM-Qwen2.5--VL%203B%20(local)-000000)
-![Tests](https://img.shields.io/badge/tests-76%20passed-2ea44f)
+![Tests](https://img.shields.io/badge/tests-77%20passed-2ea44f)
 
 </div>
 
@@ -37,7 +37,15 @@ On **3,015 posts from 127 Instagram accounts the model never saw during training
 - **Engagement score:** a regressor ranks posts by engagement with **Spearman ρ = 0.903**.
 - **Where the signal comes from:** most of it is the account's own track record. Image and caption content add a small but **statistically significant** gain on top (+0.017 macro-F1, better in 5 of 5 folds, p = 0.009).
 - **The 12-agent AI jury** (a local vision LLM role-playing 12 audience personas) gives believable, explainable reactions. It does **not** improve prediction accuracy, and we report that plainly.
-- **Every evaluation is leakage-checked:** account-disjoint splits, strictly-past history features, a negative control on synthetic data, a leakage demonstration and 76 automated tests.
+- **Every evaluation is leakage-checked:** account-disjoint splits, strictly-past history features, a negative control on synthetic data, a leakage demonstration and 77 automated tests.
+
+<p align="center">
+  <img src="docs/screenshots/01-overview.jpg" width="49%" alt="Overview page">
+  <img src="docs/screenshots/04-ab-compare.jpg" width="49%" alt="A/B compare page">
+</p>
+
+> All 13 app screenshots are in [§8 Interactive dashboard](#8-phase-5--interactive-dashboard). The demo images in the screenshots
+> are synthetic illustrations made for this README; no dataset photos are shown.
 
 ---
 
@@ -185,7 +193,7 @@ flowchart LR
 
 The dashboard's **How it works** page shows the same architecture as an animated, interactive diagram, with particles flowing along the edges and hover details for every node:
 
-![Animated architecture diagram](docs/screenshots/architecture.jpg)
+![Animated architecture diagram](docs/screenshots/00-architecture.jpg)
 
 ### What happens when you click "Analyse post"
 
@@ -331,7 +339,7 @@ That's 10 per-factor features, plus the overall mean and the disagreement.
 - **But their taste does not track real engagement:** every |ρ| ≤ 0.10.
 - **The five factors overlap:** they correlate at 0.78 on average, so they are not very distinct.
 
-![Meet the jury](docs/screenshots/meet-the-jury.jpg)
+![Meet the jury](docs/screenshots/05-meet-the-jury.jpg)
 
 ---
 
@@ -480,34 +488,54 @@ The 32 CLIP and 32 MiniLM components are **summed into one group each**, so expl
 
 ## 8. Phase 5: Interactive dashboard
 
-`make app` opens **http://localhost:8501**. The dashboard is dark-themed and animated, with interactive ECharts charts that animate on load, count-up stat tiles, a glass/bento layout and full `prefers-reduced-motion` support.
+`make app` opens **http://localhost:8501**. The dashboard is a dark, animated UI:
+- interactive **ECharts** that animate on load,
+- count-up stat tiles and a glass/bento layout,
+- a branded sidebar with a **live-model status card**,
+- step-by-step **onboarding** on empty pages, and **toast** notifications when a result is ready,
+- full `prefers-reduced-motion` support.
 
 | Page | What it does |
 |---|---|
-| **Overview** | Headline results, where the accuracy comes from, what drives a Viral prediction, the jury |
+| **Overview** | Headline results, where the accuracy comes from, what drives a Viral prediction, the AI jury |
 | **Analyse a post** | Verdict and calibrated probabilities, engagement score, SHAP factors, **suggestions**, live **12-agent jury chat** + moderator summary, best posting slot (polar clock), caption variants, **what-if simulator** (hour, weekday, caption) |
 | **A/B compare** | Two drafts side by side: winner, probabilities, why the winner wins (SHAP difference), fixes for each |
 | **Meet the jury** | Agent cards (avatar, backstory, Big Five meters), harshness, whose taste tracks engagement, agreement heatmaps |
-| **Explore predictions** | Filterable gallery of real held-out posts: true vs predicted class |
+| **Explore predictions** | Filterable gallery of real held-out posts: true vs predicted class. Runs locally; not shown here because it displays dataset photos |
 | **Model insights** | 9 tabs: CV comparison, Optuna history, confusion matrix, **threshold explorer**, ROC, calibration, cumulative gains, per-tier accuracy, SHAP, jury ablation, clusters, both bandits with forest plots, robustness and controls, data |
 | **How it works** | Animated architecture diagram, guarantees, limitations, team |
 
-![Overview](docs/screenshots/overview.jpg)
+### 8.1 Screenshots
 
-<details>
-<summary><b>More screenshots</b></summary>
+**Overview:** headline results, model comparison, SHAP drivers, the AI jury
 
-**Analyse a post: why, and what to change**
+![Overview](docs/screenshots/01-overview.jpg)
 
-![Analyse: SHAP and suggestions](docs/screenshots/analyse-why-suggestions.jpg)
+**Analyse a post: before you start.** Guided onboarding; the sidebar shows the live model
 
-**Analyse a post: the 12-agent jury and the moderator**
+![Analyse: start](docs/screenshots/02-analyse-start.jpg)
 
-![Jury chat](docs/screenshots/analyse-jury-chat.jpg)
+**Analyse a post: the full result.** Verdict and calibrated probabilities → SHAP "why" → ranked suggestions → persona-jury radar and best-time clock → the 12 agents' in-character reactions with the moderator's summary → caption variants
 
-**Model insights: per-class evaluation, threshold explorer, ROC, calibration**
+![Analyse: result](docs/screenshots/03-analyse-result.jpg)
 
-![Model insights](docs/screenshots/model-insights.jpg)
+**A/B compare:** winner, class probabilities, why the winner scores higher, how to improve each draft
+
+![A/B compare](docs/screenshots/04-ab-compare.jpg)
+
+**Meet the jury:** 12 persona agents with Big Five meters, harshness, taste vs real engagement, agreement heatmaps
+
+![Meet the jury](docs/screenshots/05-meet-the-jury.jpg)
+
+<details open>
+<summary><b>Model insights (7 of the 9 tabs)</b></summary>
+
+| | |
+|---|---|
+| **Overview:** CV macro-F1 for all models (class weights vs SMOTE), Optuna history, test table<br>![](docs/screenshots/06-insights-overview.jpg) | **Per class:** confusion matrix, recall, PR curves, threshold explorer, ROC, calibration, gains, per-tier<br>![](docs/screenshots/07-insights-per-class.jpg) |
+| **Explainability:** global SHAP importance<br>![](docs/screenshots/08-insights-explainability.jpg) | **Persona jury:** ablation with paired t-test verdicts, jury scores by class<br>![](docs/screenshots/09-insights-persona-jury.jpg) |
+| **Clusters:** silhouette, content map, Viral share per cluster<br>![](docs/screenshots/10-insights-clusters.jpg) | **Posting time:** replay curves, bootstrap-CI forest plot, logged slots<br>![](docs/screenshots/11-insights-posting-time.jpg) |
+| **Robustness & controls:** time-ordered test, Kaggle negative control, leakage demo<br>![](docs/screenshots/12-insights-robustness.jpg) | **How it works:** animated architecture, six-step pipeline, guarantees<br>![](docs/screenshots/13-how-it-works.jpg) |
 
 </details>
 
@@ -712,15 +740,16 @@ viralsense/
 │   ├── suggest.py               counterfactual suggestion engine
 │   ├── inference.py             feature pipeline for a new post, safe model loading
 │   └── pipeline.py              runs any subset of the 15 stages in order
-├── app/                         Streamlit dashboard (7 pages, ECharts, custom theme)
-├── tests/                       76 tests
+├── app/                         Streamlit dashboard (7 pages, ECharts, custom theme, logo in app/assets)
+├── tests/                       77 tests
 ├── notebooks/01_eda.ipynb       exploration only
 ├── reports/tables/  · figures/  every result as CSV / PNG
+├── docs/                        README screenshots and synthetic demo images
 ├── Makefile · requirements.lock reproducibility
 └── teammateworl/                the team's exploratory Colab notebook (Kaggle data)
 ```
 
-### 11.2 Tests (76, all passing)
+### 11.2 Tests (77, all passing)
 
 | Area | What is checked |
 |---|---|
@@ -730,7 +759,7 @@ viralsense/
 | Jury | 12 unique personas; prompts contain no numbers; strict score validation; caching avoids repeat calls; panel mode makes 1 call per post |
 | Data | Split-zip members read back byte-exact, including members that cross part boundaries |
 | Suggestions and bandits | Caption edits; suggestions ranked by gain; style arms; bootstrap CI brackets the true gain |
-| App | All 7 pages render with no results *and* with the real results |
+| App | All 7 pages render with no results *and* with the real results; form keys never collide with session-state keys |
 
 Several tests were **mutation-checked**: we planted a bug on purpose and confirmed that the test fails.
 

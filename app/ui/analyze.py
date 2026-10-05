@@ -11,7 +11,7 @@ import pandas as pd
 import streamlit as st
 
 from ui import charts
-from ui.theme import CLASS_COLORS, FAINT, MUTED, badge, demo_banner, empty, hero, section
+from ui.theme import CLASS_COLORS, FAINT, MUTED, badge, demo_banner, empty, hero, onboarding, section
 
 from viralsense.bandit.posting_time import recommend
 from viralsense.inference import featurize, load_label_spec, post_frame
@@ -114,9 +114,19 @@ def page(cfg: dict) -> None:
 
     req = st.session_state.get("req")
     if not req:
+        onboarding([
+            ("Upload your draft", "The image and caption exactly as you'd post them, plus your follower count and planned time."),
+            ("Add your history", "Your typical engagement rate is the model's strongest input. Leave it at 0 if you don't know it."),
+            ("Get the verdict", "Low, Moderate or Viral for an account of your size, with honest, calibrated probabilities."),
+            ("Improve it", "See why, ask the 12-agent jury, find the best time and test caption rewrites in the what-if lab."),
+        ], ["≈1 s without the AI jury", "≈30 s with 12 agents + moderator", "Runs 100% on this computer",
+            "Nothing is uploaded anywhere"])
         return
     if "res" not in st.session_state:
         st.session_state["res"] = compute(req, arts, cfg)
+        p = st.session_state["res"]
+        st.toast(f"Analysis ready: {p.get('pred') or max(p['proba'], key=p['proba'].get)} "
+                 f"({p['proba']['Viral']:.1%} chance of Viral)", icon="✨")
     show(req, st.session_state["res"], arts, cfg)
 
 

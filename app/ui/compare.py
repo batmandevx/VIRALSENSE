@@ -11,7 +11,7 @@ import streamlit as st
 
 from ui import charts
 from ui.analyze import load_artifacts
-from ui.theme import CLASS_COLORS, SERIES, demo_banner, empty, hero, section
+from ui.theme import CLASS_COLORS, SERIES, demo_banner, empty, hero, onboarding, section
 from viralsense.inference import featurize, post_frame
 from viralsense.models.explain import viral_shap
 from viralsense.suggest import suggest
@@ -49,10 +49,20 @@ def page(cfg: dict) -> None:
         if A[0] is None or B[0] is None:
             st.warning("Upload an image for both drafts.")
             return
-        st.session_state["ab"] = run(cfg, arts, [A, B], followers, past / 100 if past > 0 else None, int(n_past))
-    res = st.session_state.get("ab")
+        st.session_state["ab_result"] = run(cfg, arts, [A, B], followers, past / 100 if past > 0 else None, int(n_past))
+        r = st.session_state["ab_result"]
+        w = "A" if r["A"]["proba"]["Viral"] >= r["B"]["proba"]["Viral"] else "B"
+        st.toast(f"Draft {w} is the likelier winner", icon="🏆")
+    res = st.session_state.get("ab_result")
     if res:
         show(cfg, res)
+    else:
+        onboarding([
+            ("Two drafts", "Different images, captions or times: anything you're torn between."),
+            ("Same account", "Both are scored with your follower count and history, so it's a fair fight."),
+            ("A winner and why", "Calibrated P(Viral) for each, plus the SHAP factors that separate them."),
+            ("Make both better", "The top three changes for each draft, re-scored by the model."),
+        ], ["Uses the same calibrated model as Analyse", "Takes ≈2 s", "No AI jury needed"])
 
 
 def run(cfg, arts, drafts, followers, past, n_past) -> dict:
@@ -88,7 +98,7 @@ def show(cfg, res: dict) -> None:
     c1, c2 = st.columns(2, gap="large")
     for col, key in ((c1, "A"), (c2, "B")):
         with col:
-            st.image(res[key]["path"], width="stretch")
+            st.image(res[key]["path"], width=280)
             st.caption(f"{res[key]['when']:%a %d %b, %H:%M} UTC · “{res[key]['caption'][:120]}”")
     section("Class probabilities")
     classes = list(a["proba"])

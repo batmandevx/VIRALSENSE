@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="48" viewBox="0 0 240 48">
+  <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+    <stop offset="0" stop-color="#f58529"/><stop offset=".45" stop-color="#dd2a7b"/><stop offset=".75" stop-color="#8134af"/><stop offset="1" stop-color="#515bd4"/>
+  </linearGradient></defs>
+  <rect x="2" y="4" width="40" height="40" rx="12" fill="url(#g)"/>
+  <path d="M22 12 L25 21 L34 24 L25 27 L22 36 L19 27 L10 24 L19 21 Z" fill="#fff"/>
+  <text x="54" y="32" font-family="Inter, -apple-system, Segoe UI, sans-serif" font-size="22" font-weight="800" fill="#f2f1ee" letter-spacing="-0.5">ViralSense</text>
+</svg>

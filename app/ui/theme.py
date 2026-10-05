@@ -144,6 +144,23 @@ html, body, [class*="css"], .stMarkdown, .stText {{ font-family: 'Inter', system
   border: 1px solid rgba(25,158,112,.5); animation: vsFadeUp .5s ease both, vsPulse 2.4s ease-in-out 2; --glow: rgba(25,158,112,.4); }}
 .vs-winner .big {{ font-size: 1.7rem; font-weight: 800; color: {TEXT}; }}
 [data-testid="stTabs"] button[role="tab"] {{ font-weight: 600; }}
+/* Page entry */
+[data-testid="stMainBlockContainer"] {{ animation: vsFadeUp .45s ease both; }}
+/* Live dot */
+.vs-live {{ width: 8px; height: 8px; border-radius: 50%; background: #199e70; display: inline-block;
+  box-shadow: 0 0 0 0 rgba(25,158,112,.6); animation: vsLive 2s ease-out infinite; }}
+@keyframes vsLive {{ 0% {{ box-shadow: 0 0 0 0 rgba(25,158,112,.6); }} 100% {{ box-shadow: 0 0 0 9px rgba(25,158,112,0); }} }}
+/* Onboarding steps */
+.vs-steps {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: .4rem; }}
+.vs-stepcard {{ background: rgba(23,22,29,.6); border: 1px dashed rgba(255,255,255,.12); border-radius: 16px; padding: 1rem;
+  animation: vsFadeUp .5s ease both; }}
+.vs-stepcard .num {{ width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; font-weight: 800;
+  font-size: .85rem; color: #fff; background: {BRAND}; margin-bottom: .5rem; }}
+.vs-stepcard h4 {{ margin: 0 0 .25rem; color: {TEXT}; font-size: .95rem; }}
+.vs-stepcard p {{ margin: 0; color: {MUTED}; font-size: .82rem; line-height: 1.45; }}
+.vs-chiprow {{ display: flex; flex-wrap: wrap; gap: 6px; margin-top: .7rem; }}
+.vs-chiprow span {{ font-size: .74rem; padding: .25rem .6rem; border-radius: 999px; color: {MUTED};
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); }}
 [data-testid="stFileUploaderDropzone"] {{ border-radius: 14px; }}
 div[data-testid="stForm"] {{ border-radius: 16px; border-color: {GRID}; background: {SURFACE}; }}
 @media (prefers-reduced-motion: reduce) {{ *, *::before, *::after {{ animation: none !important; transition: none !important; }} }}
@@ -230,3 +247,40 @@ items.forEach((it, i) => {{
   requestAnimationFrame(tick);
 }});
 </script></body></html>""", height=height)
+
+
+def status_card(cfg: dict) -> None:
+    """Sidebar card: which model is live and how good it is (read from reports/)."""
+    from pathlib import Path
+
+    t = Path(cfg["paths"]["reports"]) / "tables"
+    rows = []
+    try:
+        sel = json.loads((t / "classification_selected.json").read_text())
+        ts = sel["test_selected"]
+        rows += [("Model", MODEL_NAMES.get(sel["best_cv"]["model"], sel["best_cv"]["model"])),
+                 ("Macro-F1 (unseen accounts)", f"{ts['macro_f1']:.3f}"), ("Viral PR-AUC", f"{ts['pr_auc_viral']:.3f}")]
+    except (OSError, KeyError, ValueError):
+        rows.append(("Model", "not trained yet"))
+    try:
+        import pandas as pd
+
+        jp = pd.read_csv(t / "jury_progress.csv").iloc[0]
+        rows.append(("Jury", f"12 agents · {int(jp.complete_posts):,} posts"))
+    except (OSError, KeyError, ValueError, IndexError):
+        pass
+    items = "".join(f'<div style="display:flex;justify-content:space-between;gap:.5rem;font-size:.78rem;padding:.18rem 0">'
+                    f'<span style="color:{FAINT}">{html.escape(k)}</span><b style="color:{TEXT};text-align:right">{html.escape(v)}</b></div>'
+                    for k, v in rows)
+    st.markdown(f'<div class="vs-glass" style="padding:.75rem .85rem;margin-top:.4rem">'
+                f'<div class="vs-label" style="display:flex;align-items:center;gap:.4rem"><span class="vs-live"></span>Live model</div>'
+                f'{items}</div><div style="font-size:.72rem;color:{FAINT};margin-top:.7rem;line-height:1.5">'
+                f'Ayush Upadhyay · R Rishita · Avantika Gupta<br/>Local AI only · no external APIs</div>', unsafe_allow_html=True)
+
+
+def onboarding(steps: list[tuple[str, str]], chips: list[str]) -> None:
+    """Empty-state guide shown before the user runs anything."""
+    cards = "".join(f'<div class="vs-stepcard" style="animation-delay:{i * 0.08:.2f}s"><div class="num">{i + 1}</div>'
+                    f'<h4>{html.escape(t)}</h4><p>{html.escape(d)}</p></div>' for i, (t, d) in enumerate(steps))
+    chip = "".join(f"<span>{html.escape(c)}</span>" for c in chips)
+    st.markdown(f'<div class="vs-steps">{cards}</div><div class="vs-chiprow">{chip}</div>', unsafe_allow_html=True)
