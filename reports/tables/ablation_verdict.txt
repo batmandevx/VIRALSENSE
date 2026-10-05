@@ -1,0 +1,4 @@
+logreg, macro_f1: jury minus no-jury = -0.029 ± 0.053 (std over 5 folds), better in 1/5 folds, one-sided paired t-test p = 0.856 -> the jury does NOT reliably help (criterion: gain >= 0.01 and p < 0.05)
+logreg, pr_auc_viral: jury minus no-jury = -0.069 ± 0.078 (std over 5 folds), better in 1/5 folds, one-sided paired t-test p = 0.941 -> the jury does NOT reliably help (criterion: gain >= 0.01 and p < 0.05)
+xgb, macro_f1: jury minus no-jury = -0.000 ± 0.024 (std over 5 folds), better in 2/5 folds, one-sided paired t-test p = 0.517 -> the jury does NOT reliably help (criterion: gain >= 0.01 and p < 0.05)
+xgb, pr_auc_viral: jury minus no-jury = -0.012 ± 0.027 (std over 5 folds), better in 2/5 folds, one-sided paired t-test p = 0.813 -> the jury does NOT reliably help (criterion: gain >= 0.01 and p < 0.05)

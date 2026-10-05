@@ -1,0 +1,8 @@
+param,importance,model
+subsample,0.385947154919859,lgbm
+num_leaves,0.17785135730710652,lgbm
+reg_lambda,0.12649367248454516,lgbm
+n_estimators,0.1083184310090906,lgbm
+learning_rate,0.10520544517256207,lgbm
+min_child_samples,0.08550287248289443,lgbm
+colsample_bytree,0.01068106662394241,lgbm

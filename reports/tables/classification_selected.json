@@ -1,0 +1,21 @@
+{
+  "best_cv": {
+    "model": "lgbm_tuned",
+    "imbalance": "class_weight",
+    "macro_f1_mean": 0.7521738498035273,
+    "macro_f1_std": 0.023464854069119537
+  },
+  "test_selected": {
+    "model": "lgbm_tuned",
+    "imbalance": "class_weight",
+    "selected_by_cv": true,
+    "macro_f1": 0.7588880161050638,
+    "balanced_acc": 0.7633519747639851,
+    "recall_Low": 0.8891820580474934,
+    "recall_Moderate": 0.6938031591737546,
+    "recall_Viral": 0.7070707070707071,
+    "pr_auc_viral": 0.7598131705026023,
+    "viral_prevalence": 0.09850746268656717
+  },
+  "deployed": "lgbm_tuned (class_weight)"
+}

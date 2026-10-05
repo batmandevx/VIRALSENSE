@@ -1,0 +1,2 @@
+model,macro_f1,balanced_acc,recall_Low,recall_Moderate,recall_Viral,pr_auc_viral,viral_prevalence
+"logreg on log likes, log comments, log followers (LEAKY)",0.9386507046466909,0.9588678766154398,0.9540897097625329,0.9258809234507898,0.9966329966329966,0.9961320576522914,0.09850746268656717

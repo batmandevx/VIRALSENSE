@@ -1,0 +1,9 @@
+{
+  "model": "lgbm_tuned (class_weight)",
+  "weights": {
+    "Low": 1.0,
+    "Moderate": 1.2,
+    "Viral": 1.4
+  },
+  "oof_posts": 11985
+}

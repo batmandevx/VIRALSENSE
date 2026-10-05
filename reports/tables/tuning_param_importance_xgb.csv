@@ -1,0 +1,8 @@
+param,importance,model
+n_estimators,0.48905258601386875,xgb
+max_depth,0.2341223737287544,xgb
+colsample_bytree,0.16314128090262786,xgb
+learning_rate,0.04992865294169281,xgb
+reg_lambda,0.032547136766677434,xgb
+subsample,0.01613683558274252,xgb
+min_child_weight,0.015071134063636249,xgb

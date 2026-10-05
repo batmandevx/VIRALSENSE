@@ -1,0 +1,3 @@
+block,dims_in,dims_out,explained_variance
+clip,512,32,0.44009373
+txt,384,32,0.44861895

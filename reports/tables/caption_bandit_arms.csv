@@ -1,0 +1,36 @@
+split,arm,n_posts,reward_rate
+test,long · 0 tags · no question,66,0.42424242424242425
+test,long · 0 tags · question,37,0.43243243243243246
+test,long · 1-5 tags · no question,114,0.37719298245614036
+test,long · 1-5 tags · question,64,0.25
+test,long · 6+ tags · no question,450,0.34444444444444444
+test,long · 6+ tags · question,211,0.3127962085308057
+test,medium · 0 tags · no question,217,0.45161290322580644
+test,medium · 0 tags · question,56,0.625
+test,medium · 1-5 tags · no question,318,0.29874213836477986
+test,medium · 1-5 tags · question,61,0.22950819672131148
+test,medium · 6+ tags · no question,381,0.2545931758530184
+test,medium · 6+ tags · question,53,0.32075471698113206
+test,short · 0 tags · no question,589,0.5008488964346349
+test,short · 0 tags · question,28,0.5714285714285714
+test,short · 1-5 tags · no question,324,0.3549382716049383
+test,short · 1-5 tags · question,17,0.29411764705882354
+test,short · 6+ tags · no question,29,0.3103448275862069
+train,long · 0 tags · no question,257,0.41245136186770426
+train,long · 0 tags · question,166,0.42168674698795183
+train,long · 1-5 tags · no question,455,0.45054945054945056
+train,long · 1-5 tags · question,276,0.4057971014492754
+train,long · 6+ tags · no question,1998,0.3858858858858859
+train,long · 6+ tags · question,837,0.4241338112305854
+train,medium · 0 tags · no question,800,0.4375
+train,medium · 0 tags · question,234,0.4658119658119658
+train,medium · 1-5 tags · no question,1224,0.34068627450980393
+train,medium · 1-5 tags · question,260,0.4
+train,medium · 6+ tags · no question,1286,0.3522550544323484
+train,medium · 6+ tags · question,180,0.37222222222222223
+train,short · 0 tags · no question,2392,0.467809364548495
+train,short · 0 tags · question,191,0.450261780104712
+train,short · 1-5 tags · no question,1233,0.33008921330089214
+train,short · 1-5 tags · question,79,0.3924050632911392
+train,short · 6+ tags · no question,114,0.2894736842105263
+train,short · 6+ tags · question,3,0.0

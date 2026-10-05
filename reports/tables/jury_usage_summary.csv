@@ -1,0 +1,2 @@
+backend,model,calls,failed_calls,retries,input_tokens,output_tokens,usd,wall_hours,sec_per_call,cached_responses,responses_without_usage_log
+ollama,qwen2.5vl:3b,10903,0,0,14752530,479732,0.0,4.707,1.55,11419,516

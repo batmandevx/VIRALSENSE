@@ -1,0 +1,103 @@
+seed: 42
+
+paths:
+  # Root of the Instagram Influencer Dataset (Kim et al., ksb2043).
+  data_root: data/raw/kim
+  json_archive: Post_metadata/posts_info      # split-zip stem; post JSON is read in place (null = json_dir)
+  image_archive_index: Post_images/index.parquet  # images are range-fetched from Drive (null = image_dir)
+  drive_ids: drive_ids.json
+  image_cache: images
+  image_member_template: "image/{account}-{file}"
+  fetch_workers: 24
+  influencers_file: influencers.txt
+  mapping_file: JSON-Image_files_mapping.txt
+  json_dir: info            # post metadata JSON files, relative to data_root
+  image_dir: image          # post images, relative to data_root
+  interim: data/interim
+  processed: data/processed
+  cache: data/cache
+  reports: reports
+  artifacts: artifacts
+
+sample:
+  n_posts: 15000
+  min_accounts: 500
+  n_accounts: 640           # oversampled, equal per follower stratum; trimmed to n_posts
+  max_posts_per_account: 24
+  min_posts_per_account: 8  # need history for past-median engagement
+  strata: 4                 # follower quantile strata used for sampling
+
+labels:
+  n_tiers: 4                          # follower tiers, quantile edges fit on train accounts
+  quantiles: [0.60, 0.90]             # Low < q60 <= Moderate < q90 <= Viral, within tier
+  classes: [Low, Moderate, Viral]
+
+split:
+  test_account_frac: 0.20
+  n_folds: 5
+
+features:
+  clip_model: ViT-B-32
+  clip_pretrained: laion2b_s34b_b79k
+  text_model: sentence-transformers/all-MiniLM-L6-v2
+  pca_dims: 32
+  # CLIP zero-shot concepts ("a photo of ..."): interpretable image content scores (softmax over the list).
+  concepts: [selfie, group of friends, couple, baby or child, pet, food, drink or coffee, fashion outfit,
+             makeup or beauty product, fitness or workout, landscape or nature, beach, city or architecture,
+             home interior, product photo, text or quote graphic]
+  batch_size: 64
+  # Columns allowed although derived from engagement: computed only from strictly earlier posts.
+  history_whitelist: [acct_past_median_er, acct_n_past_posts, acct_recent_median_er, acct_past_er_iqr, acct_er_trend]
+  # A column is a leak if any '_'-separated token of its name is in this list, unless whitelisted.
+  forbidden_tokens: [like, likes, comment, comments, engagement, er, label, target, viral, class]
+
+jury:
+  backend: ollama           # ollama | openrouter | stub (stub = deterministic fake scores, tests only)
+  mode: per_persona         # per_persona (one call per persona, independent) | panel (one call per post, 12x fewer)
+  model: qwen2.5vl:3b
+  host: http://localhost:11434
+  personas_file: configs/personas.yaml
+  n_posts: 1500             # stratified subset; the local run was stopped early and uses the 951 posts fully rated
+  image_max_side: 512
+  temperature: 0.2
+  max_retries: 2
+  workers: 1                # concurrent requests to Ollama (set OLLAMA_NUM_PARALLEL to match)
+  timeout_s: 180
+  usd_per_1k_input_tokens: 0.0    # local model: no API cost; tokens and wall time are still logged
+  usd_per_1k_output_tokens: 0.0
+  factors: [scroll_stop, emotional_pull, shareability, save_intent, comment_trigger]
+
+openrouter:                       # API jury (jury.backend: openrouter); key read from env or the git-ignored .env
+  provider: openrouter            # openrouter | nvidia | gemini  (all OpenAI-compatible)
+  model: qwen/qwen3.8-27b:free    # free vision model with JSON-schema output
+  free_only: true                 # project rule: refuse any model that is not free
+  free_models: []                 # free-tier models without a ":free" id (e.g. NVIDIA build.nvidia.com) go here
+  workers: 2                      # concurrent requests
+  rpm: 18                         # stay under OpenRouter's 20 requests/minute on :free models
+  max_usd: 0.0                    # spending cap: any reported cost stops the run
+
+models:
+  n_jobs: -1
+  too_good_macro_f1: 0.85         # stop and investigate above this
+  too_good_viral_pr_auc: 0.85
+  xgb: {n_estimators: 400, max_depth: 5, learning_rate: 0.05, subsample: 0.8, colsample_bytree: 0.6}
+  rf: {n_estimators: 400, min_samples_leaf: 3}
+  lgbm: {n_estimators: 400, num_leaves: 31, learning_rate: 0.05, subsample: 0.8, subsample_freq: 1, colsample_bytree: 0.6}
+  hgb: {max_iter: 300, learning_rate: 0.05, max_depth: 6}
+  lr: {C: 1.0, max_iter: 2000}
+  kmeans_k: [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20]
+  ablation_pca_dims: 8            # smaller embeddings for the 951-post jury subset (64 dims overfit 761 posts)
+
+bandit:
+  n_slots: 8                      # 3-hour UTC slots
+  alpha: 1.0
+  n_seeds: 10
+  reward: label_at_least_moderate # reward 1 if the post is Moderate or Viral
+
+captions:
+  n_variants: 3
+  model: qwen2.5vl:3b
+
+control:
+  # Team's Kaggle "Instagram Analytics" CSV (synthetic, 20 accounts) used as a negative control.
+  kaggle_csv: ~/.cache/kagglehub/datasets/kundanbedmutha/instagram-analytics-dataset/versions/3/Instagram_Analytics.csv
